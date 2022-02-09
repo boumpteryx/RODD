@@ -6,7 +6,7 @@ include("parser.jl")
 start = time()
 
 function Mymodel(MyFileName::String)
-  n, P, alpha, Survie, indice_danger, cout = read_instance(MyFileName)
+  N, Nm, Nf, C, G, A, T, init, y = read_instance(MyFileName)
 
   # Create the model
   m = Model(CPLEX.Optimizer)
@@ -41,12 +41,6 @@ function Mymodel(MyFileName::String)
   z_vals = JuMP.getvalue.( m[:z] )
   # println(z_vals)
 
-  for k in 1:P
-    println(-(exp(sum(z_vals[k,i,j] for i in 1:n, j in 1:n))-1))
-  end
-
-  # println(-(exp(sum(z[k,i,j] for i in 1:n, j in 1:n))-1))
-
 end
 
-Mymodel("outputn10P6.txt")
+Mymodel("DivGenetique_ampl.dat")
