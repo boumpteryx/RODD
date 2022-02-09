@@ -6,33 +6,25 @@ include("parser.jl")
 start = time()
 
 function Mymodel(MyFileName::String)
-  N, Nm, Nf, C, G, A, T, init, y = read_instance(MyFileName)
+  P, Nm, Nf, C, G, A, T, init, y = read_instance(MyFileName)
+  nbAllele = A * G
 
   # Create the model
   m = Model(CPLEX.Optimizer)
 
   ## Variables
-  @variable(m, x[1:n,1:n], Bin)
-  @variable(m, y[1:n,1:n], Bin)
-  @variable(m, z[1:P,1:n,1:n] <= 0)
+  @variable(m, x[1:P] >= 0, Int)
+  @variable(m, t[1:nbAllele] >= 0)
+  @variable(m, z[1:nbAllele] >= 0)
 
   ## Constraints
-  @constraint(m, [k in 1:P, i in 1:n, j in 1:n ; indice_danger[k] == 0], z[k,i,j] >= x[i,j]*log(1-Survie[k,i,j]))
-  @constraint(m, [k in 1:P, i in 1:n, j in 1:n ; indice_danger[k] == 1], z[k,i,j] >= y[i,j]*log(1-Survie[k,i,j]))
-  @constraint(m, [k in 1:P], sum(z[k,i,j] for i in 1:n, j in 1:n) <= log(1-alpha[k]))
-  @constraint(m, [i in 1:n, j in 1:n ; i == 1 || j == 1 || i == n || j == n], y[i] <= 0)    # bordure => y = 0
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i,j])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i-1,j])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i+1,j])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i,j-1])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i,j+1])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i-1,j-1])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i-1,j+1])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i+1,j-1])
-  @constraint(m, [i in 2:n-1, j in 2:n-1], y[i,j] <= x[i+1,j+1])
+  @constraint(m, sum(x[i] for i in 1:Nm) = P)
+  @constraint(m, sum(x[i] for i in Nm+1:P) = P)
+  @constraint(m, [j in 1:nbAllele], z[j] >= t[j] - sum(x[i] for i in 1:P if y[i,j] == 2))
+  
 
   ## Objective
-  @objective(m, Min, sum(x[i,j]*cout[i,j] for i in 1:n, j in 1:n))
+  @objective(m, Min, sum(z[j] j in 1:nbAllele))
 
   #resolution
   optimize!(m)
