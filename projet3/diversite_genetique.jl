@@ -25,7 +25,7 @@ function Mymodel(MyFileName::String)
   @constraint(m, sum(x[i] for i in 1:Nm) == P)
   @constraint(m, sum(x[i] for i in Nm+1:P) == P)
   @constraint(m, [j in 1:nbAllele], z[j] >= t[j] - sum(x[i] for i in 1:P if y[i,j] == 2))
-  @constraint(m, [j in 1:nbAllele, h in 1:T], log(theta[h]) + ((t[j] - theta[h]) / theta[h]) >= sum(log(y[i,j])*x[i] for i in 1:P if y[i,j] == 1))
+  @constraint(m, [j in 1:nbAllele, h in 1:T], log(theta[h]) + ((t[j] - theta[h]) / theta[h]) >= sum(log((1-0.5*y[i,j]))*x[i] for i in 1:P if y[i,j] == 1))
   @constraint(m, [i in 1:P], x[i] <= 3) # limiter nombre d'enfant par individu
 
   ## Objective
@@ -37,6 +37,8 @@ function Mymodel(MyFileName::String)
   println(solution_summary(m, verbose=true))
   x_vals = JuMP.getvalue.( m[:x] )
   println(x_vals)
+
+  # penser a calculer proba
 
 end
 
