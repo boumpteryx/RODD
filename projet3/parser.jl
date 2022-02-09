@@ -20,12 +20,12 @@ function read_instance(MyFileName::String)
     T = parse(Int64, split(readline(myFile), " ")[3])
     init = parse(Float64, split(readline(myFile), " ")[3])
 
-    y = Array{Int64,2}(ones(N,A*G)) # on met a zero pour l'instant
+    y = Array{Int64,2}(zeros(N,A*G)) # on met a zero pour l'instant
     data = readlines(myFile)
 		for datum in data
       line = split(datum, " ")
       allele = (parse(Int64,line[3]) - 1) * A + parse(Int64,line[5])
-      y[parse(Int64,line[1]),allele] = y[parse(Int64,line[1]),allele] +1
+      y[parse(Int64,line[1]),allele] = y[parse(Int64,line[1]),allele] + 1
     end
 
     return N, Nm, Nf, C, G, A, T, init, y
