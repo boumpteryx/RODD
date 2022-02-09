@@ -8,6 +8,10 @@ start = time()
 function Mymodel(MyFileName::String)
   P, Nm, Nf, C, G, A, T, init, y = read_instance(MyFileName)
   nbAllele = A * G
+  theta = Array{Float64,1}(zeros(T))
+  for i in 1:T
+    theta[i] = init^((T-i)/(T-1))
+  end
 
   # Create the model
   m = Model(CPLEX.Optimizer)
@@ -18,19 +22,19 @@ function Mymodel(MyFileName::String)
   @variable(m, z[1:nbAllele] >= 0)
 
   ## Constraints
-  @constraint(m, sum(x[i] for i in 1:Nm) = P)
-  @constraint(m, sum(x[i] for i in Nm+1:P) = P)
+  @constraint(m, sum(x[i] for i in 1:Nm) == P)
+  @constraint(m, sum(x[i] for i in Nm+1:P) == P)
   @constraint(m, [j in 1:nbAllele], z[j] >= t[j] - sum(x[i] for i in 1:P if y[i,j] == 2))
-  
+  @constraint(m, [j in 1:nbAllele, h in 1:T], log(theta[h]) + ((t[j] - theta[h]) / theta[h]) >= sum(log(y[i,j])*x[i] for i in 1:P if y[i,j] == 1))
 
   ## Objective
-  @objective(m, Min, sum(z[j] j in 1:nbAllele))
+  @objective(m, Min, sum(z[j] for j in 1:nbAllele))
 
   #resolution
   optimize!(m)
 
   # solution_summary(m, verbose=true)
-  z_vals = JuMP.getvalue.( m[:z] )
+  # x_vals = JuMP.getvalue.( m[:x] )
   # println(z_vals)
 
 end
