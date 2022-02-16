@@ -2,8 +2,8 @@
 
 
 P = 1
-m = 10
-n = 10
+m = 15
+n = 15
 w1 = 1
 w2 = 5
 L = 3
@@ -12,7 +12,7 @@ g = 1.26157
 
 
 # Ouvrir le fichier "output.txt" dans lequel on pourra écrire
-fout = open("output.txt", "w")
+fout = open("output30.txt", "w")
 
 println(fout, "P = " * string(P))
 println(fout, "m = " * string(m))
