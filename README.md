@@ -1,6 +1,5 @@
 # RODD
 Recherche Opérationnelle &amp; Développement Durable
-# Antoine Desjardins & Daphné Kany
 
 Pour ce repo nous utilisons Julia 1.6.3 et CPLEX :
 
