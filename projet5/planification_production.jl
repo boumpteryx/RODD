@@ -2,10 +2,8 @@ using JuMP
 using CPLEX
 
 
-start = time()
-
-function Rolling()
-  T, M, Emax, Tprim = 12, 4, 3, 2
+function Rolling(Tprim::Int64)
+  T, M, Emax = 12, 4, 3
   f = [10,30,60,90]
   e = [8,6,4,2]
   h = Array{Int64,1}(ones(T))
@@ -37,10 +35,17 @@ function Rolling()
 
   x_sol = JuMP.getvalue.(model[:x])
   cout_carbone = sum(e[m]*x_sol[t,m] for m in 1:M, t in 1:T)
-  println("cout carbone = ", cout_carbone)
-  println("objective value = ", JuMP.getobjectivevalue.(model))
-
+  println(fout, "cout carbone = ", cout_carbone)
+  println(fout, "objective value = ", JuMP.getobjectivevalue.(model))
 end
 
-Rolling()
-println("execution time = ", time() - start, "s")
+fout = open("resultats.txt", "w")
+
+
+for Tprim in 1:12
+  start = time()
+  println(fout, "Tprim = ", Tprim)
+  Rolling(Tprim)
+  println(fout, "execution time = ", time() - start, "s")
+end
+close(fout)
