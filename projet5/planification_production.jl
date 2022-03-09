@@ -56,10 +56,11 @@ for Tprim in 1:T
 end
 close(fout)
 
+plotlyjs()
 plot(1:T,cout_carbone_history)
 xlabel!("Tprim")
 ylabel!("cout carbone")
 
-plot(1:T,cout_history)
-xlabel!("Tprim")
-ylabel!("cout")
+# plot(1:T,cout_history)
+# xlabel!("Tprim")
+# ylabel!("cout")
