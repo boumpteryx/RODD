@@ -3,7 +3,7 @@ using CPLEX
 using Plots
 
 function Rolling(Tprim::Int64)
-  T, M, Emax = 12, 6, 3
+  T, M, Emax = 36, 4, 3
   f = [10,30,60,90, 10, 30]
   e = [8,6,4,2, 8, 6]
   h = Array{Int64,1}(ones(T))
@@ -40,9 +40,9 @@ function Rolling(Tprim::Int64)
   return cout_carbone, JuMP.getobjectivevalue.(model)
 end
 
-fout = open("resultatsEmax3M6.txt", "w")
+fout = open("resultatsEmax3M4T36.txt", "w")
 
-T = 12
+T = 36
 cout_carbone_history = Array{Float64,1}(zeros(T))
 cout_history = Array{Float64,1}(zeros(T))
 
@@ -57,10 +57,10 @@ end
 close(fout)
 
 plotlyjs()
-plot(1:T,cout_carbone_history)
-xlabel!("Tprim")
-ylabel!("cout carbone")
-
-# plot(1:T,cout_history)
+# plot(1:T,cout_carbone_history)
 # xlabel!("Tprim")
-# ylabel!("cout")
+# ylabel!("cout carbone")
+
+plot(1:T,cout_history)
+xlabel!("Tprim")
+ylabel!("cout")
